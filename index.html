@@ -2,111 +2,109 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Acceso</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruta Topitop Lima</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
 <style>
-html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-  background:
-    linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)),
-    url("https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=1920&auto=format&fit=crop") 
-    center/cover no-repeat;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.overlay{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+#sidebar {
+  width: 280px;
+  background: #111;
+  color: white;
+  padding: 15px;
+  overflow-y: auto;
 }
 
-.box{
-  background: rgba(0,0,0,0.7);
-  border: 15px solid white;
-  padding: 50px 60px;
-  text-align:center;
-  box-shadow: 
-    0 0 25px #ffffff,
-    0 0 60px rgba(255,255,255,0.8);
+#sidebar h2 {
+  text-align: center;
 }
 
-h1{
-  color:white;
-  font-size:48px;
-  margin-bottom:25px;
-  letter-spacing:4px;
+.location-item {
+  padding: 10px;
+  border-bottom: 1px solid #333;
+  cursor: pointer;
 }
 
-input{
-  font-size:26px;
-  padding:12px 15px;
-  width:260px;
-  text-align:center;
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-  border:none;
-  outline:none;
-  background:black;
-  color:white;
-  box-shadow: inset 0 0 10px #000, 0 0 10px #fff;
+.location-item:hover {
+  background: #222;
 }
 
-button{
-  margin-top:20px;
-  padding:10px 30px;
-  font-size:22px;
-  cursor:pointer;
-  background:black;
-  color:white;
-  border:2px solid white;
-  letter-spacing:3px;
-  box-shadow:0 0 10px #fff,0 0 25px #fff;
+.orden {
+  background: #4CAF50;
+  padding: 3px 7px;
+  border-radius: 50%;
+  margin-right: 8px;
 }
 
-#error{
-  color:#ff4c4c;
-  margin-top:15px;
-  font-size:18px;
-  display:none;
-  text-shadow:0 0 10px red;
+#map {
+  flex: 1;
 }
 </style>
 </head>
 
 <body>
 
-<div class="overlay">
-  <div class="box">
-    <h1>INGRESA TU CÓDIGO</h1>
-    <input id="codeInput" placeholder="CÓDIGO">
-    <br>
-    <button onclick="checkCode()">ENTRAR</button>
-    <div id="error">CÓDIGO INVÁLIDO</div>
-  </div>
+<div id="sidebar">
+  <h2>Ruta Topitop</h2>
+  <div id="lista"></div>
 </div>
 
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 <script>
-async function checkCode(){
-  const input = document.getElementById("codeInput").value.trim().toUpperCase();
-  const error = document.getElementById("error");
+const map = L.map('map').setView([-12.0464, -77.0428], 12);
 
-  const res = await fetch("codes.json");
-  const data = await res.json();
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap'
+}).addTo(map);
 
-  const valid = data.codes.find(p => p.code === input);
+const lista = document.getElementById("lista");
 
-  if(valid){
-    localStorage.setItem("access_granted","true");
-    localStorage.setItem("guest_name", valid.name);
-    window.location.href = "invi.html";
-  }else{
-    error.style.display = "block";
-  }
-}
+// Cargar JSON externo
+fetch("tiendas.json")
+  .then(response => response.json())
+  .then(data => {
+
+    const tiendas = data.tiendas.sort((a, b) => a.orden - b.orden);
+
+    tiendas.forEach(tienda => {
+
+      const marker = L.marker([tienda.latitud, tienda.longitud]).addTo(map)
+        .bindPopup(`
+          <b>#${tienda.orden} - ${tienda.nombre}</b><br>
+          Cantidad: ${tienda.cantidad}<br><br>
+          <a href="${tienda.link}" target="_blank">
+          Abrir en Google Maps</a>
+        `);
+
+      const item = document.createElement("div");
+      item.className = "location-item";
+      item.innerHTML = `
+        <span class="orden">${tienda.orden}</span>
+        ${tienda.nombre}
+      `;
+
+      item.onclick = () => {
+        map.setView([tienda.latitud, tienda.longitud], 16);
+        marker.openPopup();
+      };
+
+      lista.appendChild(item);
+    });
+
+  });
+
 </script>
 
 </body>
