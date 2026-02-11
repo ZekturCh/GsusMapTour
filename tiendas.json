@@ -1,0 +1,32 @@
+
+  {
+  "ciudad": "Lima",
+  "tiendas": [
+    {
+      "orden": 1,
+      "nombre": "Topitop - Jockey Plaza",
+      "latitud": -12.0865,
+      "longitud": -76.9756,
+      "cantidad": 12,
+      "link": "https://goo.gl/maps/xxxx1"
+    },
+    {
+      "orden": 2,
+      "nombre": "Topitop - Plaza San Miguel",
+      "latitud": -12.0778,
+      "longitud": -77.0837,
+      "cantidad": 8,
+      "link": "https://goo.gl/maps/xxxx2"
+    },
+    {
+      "orden": 3,
+      "nombre": "Topitop - Mall del Sur",
+      "latitud": -12.1560,
+      "longitud": -76.9819,
+      "cantidad": 5,
+      "link": "https://goo.gl/maps/xxxx3"
+    }
+  ]
+}
+
+
