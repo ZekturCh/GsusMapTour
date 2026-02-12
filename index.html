@@ -16,44 +16,117 @@ body {
   overflow: hidden;
 }
 
+/* SIDEBAR */
 #sidebar {
-  width: 280px;
-  background: #111;
+  width: 300px;
+  background: #0f2e0f;
   color: white;
   padding: 15px;
   overflow-y: auto;
+  transition: transform 0.3s ease;
 }
 
+/* Logo */
+.logo-container {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.logo-container img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Título */
 #sidebar h2 {
   text-align: center;
+  color: #4CAF50;
 }
 
+/* Item lista */
 .location-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 10px;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #1f4f1f;
   cursor: pointer;
 }
 
 .location-item:hover {
-  background: #222;
+  background: #143d14;
+}
+
+.location-item.completed span {
+  text-decoration: line-through;
+  color: #7CFC00;
 }
 
 .orden {
   background: #4CAF50;
-  padding: 3px 7px;
+  padding: 4px 8px;
   border-radius: 50%;
   margin-right: 8px;
 }
 
+/* Botón check */
+.check-btn {
+  background: #4CAF50;
+  border: none;
+  color: white;
+  padding: 5px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* MAP */
 #map {
   flex: 1;
+}
+
+/* Botón toggle móvil */
+#toggleBtn {
+  display: none;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  background: #4CAF50;
+  border: none;
+  color: white;
+  padding: 8px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #sidebar {
+    position: absolute;
+    height: 100%;
+    z-index: 999;
+    transform: translateX(-100%);
+  }
+  #sidebar.active {
+    transform: translateX(0);
+  }
+  #toggleBtn {
+    display: block;
+  }
 }
 </style>
 </head>
 
 <body>
 
+<button id="toggleBtn">☰</button>
+
 <div id="sidebar">
+  <div class="logo-container">
+    <!-- Cambia la ruta por tu logo -->
+    <img src="imeka.png" alt="Logo Empresa">
+  </div>
+
   <h2>Ruta Topitop</h2>
   <div id="lista"></div>
 </div>
@@ -63,6 +136,9 @@ body {
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
+const storageKey = "ruta_topitop_checklist";
+let progreso = JSON.parse(localStorage.getItem(storageKey)) || {};
+
 const map = L.map('map').setView([-12.0464, -77.0428], 12);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -71,14 +147,13 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 const lista = document.getElementById("lista");
 
-// Cargar JSON externo
 fetch("tiendas.json")
   .then(response => response.json())
   .then(data => {
 
     const tiendas = data.tiendas.sort((a, b) => a.orden - b.orden);
 
-    tiendas.forEach(tienda => {
+    tiendas.forEach((tienda, index) => {
 
       const marker = L.marker([tienda.latitud, tienda.longitud]).addTo(map)
         .bindPopup(`
@@ -90,21 +165,56 @@ fetch("tiendas.json")
 
       const item = document.createElement("div");
       item.className = "location-item";
-      item.innerHTML = `
-        <span class="orden">${tienda.orden}</span>
-        ${tienda.nombre}
-      `;
+      if (progreso[index]) item.classList.add("completed");
 
-      item.onclick = () => {
+      const nameContainer = document.createElement("div");
+      nameContainer.style.display = "flex";
+      nameContainer.style.alignItems = "center";
+
+      const ordenSpan = document.createElement("span");
+      ordenSpan.className = "orden";
+      ordenSpan.textContent = tienda.orden;
+
+      const nameSpan = document.createElement("span");
+      nameSpan.textContent = tienda.nombre;
+
+      nameContainer.appendChild(ordenSpan);
+      nameContainer.appendChild(nameSpan);
+
+      nameContainer.onclick = () => {
         map.setView([tienda.latitud, tienda.longitud], 16);
         marker.openPopup();
+        if (window.innerWidth < 768) {
+          sidebar.classList.remove("active");
+        }
       };
 
+      const checkBtn = document.createElement("button");
+      checkBtn.textContent = "✔";
+      checkBtn.className = "check-btn";
+
+      checkBtn.onclick = (e) => {
+        e.stopPropagation();
+        progreso[index] = !progreso[index];
+        localStorage.setItem(storageKey, JSON.stringify(progreso));
+        item.classList.toggle("completed");
+      };
+
+      item.appendChild(nameContainer);
+      item.appendChild(checkBtn);
       lista.appendChild(item);
+
     });
 
   });
 
+// Toggle menú móvil
+const toggleBtn = document.getElementById("toggleBtn");
+const sidebar = document.getElementById("sidebar");
+
+toggleBtn.addEventListener("click", () => {
+  sidebar.classList.toggle("active");
+});
 </script>
 
 </body>
