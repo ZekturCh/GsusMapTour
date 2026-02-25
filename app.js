@@ -75,21 +75,26 @@ function showCamera() {
 
 // 📂 Cargar todas las fotos
 function loadGallery() {
-  fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/Boda28feb.json`)
+  fetch(`https://res.cloudinary.com/dsnptnqil/image/list/Boda28feb.json`)
     .then(res => res.json())
     .then(data => {
       const gallery = document.getElementById("gallery");
       gallery.innerHTML = "";
 
-      if (!data.resources) {
+      if (!data.resources || data.resources.length === 0) {
         gallery.innerHTML = "No hay fotos aún 📸";
         return;
       }
 
-      data.resources.forEach(img => {
-        const image = document.createElement("img");
-        image.src = img.secure_url;
-        gallery.appendChild(image);
+      data.resources.forEach(item => {
+
+        const imageUrl = `https://res.cloudinary.com/dsnptnqil/image/upload/f_auto,q_auto/v${item.version}/${item.public_id}.${item.format}`;
+
+        const img = document.createElement("img");
+        img.src = imageUrl;
+        img.loading = "lazy";
+
+        gallery.appendChild(img);
       });
     })
     .catch(err => {
