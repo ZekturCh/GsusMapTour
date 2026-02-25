@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Boda 28 Feb 📸</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Botón menú -->
+  <div id="menuButton">☰</div>
+
+  <!-- Menú lateral -->
+  <div id="sideMenu">
+    <button onclick="showCamera()">📸 Tomar Foto</button>
+    <button onclick="showGallery()">🖼 Ver Álbum</button>
+  </div>
+
+  <!-- Cámara -->
+  <div id="cameraSection">
+    <video id="video" autoplay playsinline></video>
+    <button id="captureBtn">Tomar Foto</button>
+    <canvas id="canvas" style="display:none;"></canvas>
+  </div>
+
+  <!-- Galería -->
+  <div id="gallerySection" style="display:none;">
+    <h2>Álbum del Evento</h2>
+    <div id="gallery"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
