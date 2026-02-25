@@ -47,6 +47,7 @@ function uploadToCloudinary(blob) {
   formData.append("file", blob);
   formData.append("upload_preset", UPLOAD_PRESET);
   formData.append("folder", FOLDER);
+  formData.append("tags", "Boda28feb");
 
   fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
     method: "POST",
@@ -74,11 +75,16 @@ function showCamera() {
 
 // 📂 Cargar todas las fotos
 function loadGallery() {
-  fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${FOLDER}.json`)
+  fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/Boda28feb.json`)
     .then(res => res.json())
     .then(data => {
       const gallery = document.getElementById("gallery");
       gallery.innerHTML = "";
+
+      if (!data.resources) {
+        gallery.innerHTML = "No hay fotos aún 📸";
+        return;
+      }
 
       data.resources.forEach(img => {
         const image = document.createElement("img");
@@ -86,8 +92,9 @@ function loadGallery() {
         gallery.appendChild(image);
       });
     })
-    .catch(() => {
+    .catch(err => {
+      console.error(err);
       document.getElementById("gallery").innerHTML =
-        "No se pudieron cargar las fotos.";
+        "Error cargando álbum.";
     });
 }
