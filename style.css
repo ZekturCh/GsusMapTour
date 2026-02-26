@@ -64,7 +64,7 @@ body {
 #uploadLoader {
   text-align: center;
   padding: 15px;
-  font-size: 18px;
+  font-size: 30px;
   color: white;
 }
 #sideMenu button {
@@ -74,21 +74,21 @@ body {
   border: none;
   background: transparent;
   color: white;
-  font-size: 18px;
+  font-size: 30px;
   text-align: left;
 }
 #closeMenu {
   position: absolute;
   top: 15px;
   right: 15px;
-  font-size: 22px;
+  font-size: 32px;
   color: white;
   cursor: pointer;
 }
 
 button {
   padding: 16px 24px;
-  font-size: 18px;
+  font-size: 30px;
   border-radius: 12px;
   border: none;
   background: #000;
