@@ -14,8 +14,8 @@ body {
 #video {
   position: relative;
   z-index: 1;
-  width: 85%;
-  height: 50vh; /* cámara más pequeña */
+  width: 100%;
+  height: 75vh; /* cámara más pequeña */
   object-fit: cover;
 }
 
