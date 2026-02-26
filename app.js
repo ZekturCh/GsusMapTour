@@ -8,6 +8,7 @@ const captureBtn = document.getElementById("captureBtn");
 
 const sideMenu = document.getElementById("sideMenu");
 const menuButton = document.getElementById("menuButton");
+const closeMenu = document.getElementById("closeMenu");
 
 const uploadFileBtn = document.getElementById("uploadFileBtn");
 const fileInput = document.getElementById("fileInput");
@@ -19,7 +20,9 @@ menuButton.onclick = () => {
   sideMenu.style.left =
     sideMenu.style.left === "0px" ? "-220px" : "0px";
 };
-
+closeMenu.onclick = () => {
+  sideMenu.style.left = "-220px";
+};
 // 📸 Iniciar cámara automáticamente
 function startCamera() {
   navigator.mediaDevices.getUserMedia({
