@@ -92,9 +92,16 @@ function uploadToCloudinary(blob) {
   })
     .then(res => res.json())
     .then(data => {
-      alert("Foto subida 📸✨");
-      console.log(data);
-    })
+  alert("Foto subida 📸✨");
+  console.log(data);
+
+  // Reiniciar cámara suavemente
+  if (currentStream) {
+    currentStream.getTracks().forEach(track => track.stop());
+  }
+
+  startCamera();
+})
     .catch(err => alert("Error subiendo imagen"));
 }
 
