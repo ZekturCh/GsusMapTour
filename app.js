@@ -9,6 +9,9 @@ const captureBtn = document.getElementById("captureBtn");
 const sideMenu = document.getElementById("sideMenu");
 const menuButton = document.getElementById("menuButton");
 
+const uploadFileBtn = document.getElementById("uploadFileBtn");
+const fileInput = document.getElementById("fileInput");
+
 let currentFacingMode = "environment";
 let currentStream = null;
 
@@ -42,38 +45,19 @@ startCamera();
 captureBtn.onclick = () => {
   const ctx = canvas.getContext("2d");
 
-  canvas.width = 600;
-  canvas.height = 750;
+  // Usar tamaño real del video
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
 
-  ctx.fillStyle = "white";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+  // Si es selfie, invertir correctamente
   if (currentFacingMode === "user") {
     ctx.translate(canvas.width, 0);
     ctx.scale(-1, 1);
   }
 
-  ctx.drawImage(video, 50, 50, 500, 500);
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-  const banner = document.getElementById("weddingBanner");
-
-  const photoTop = 50;
-  const photoHeight = 500;
-  const photoBottom = photoTop + photoHeight;
-
-  const espacioInferior = canvas.height - photoBottom;
-
-  const bannerRatio = banner.naturalWidth / banner.naturalHeight;
-
-  const bannerWidth = canvas.width * 0.9;
-  const bannerHeight = bannerWidth / bannerRatio;
-
-  const x = (canvas.width - bannerWidth) / 2;
-  const y = photoBottom + (espacioInferior - bannerHeight) / 2;
-
-  ctx.drawImage(banner, x, y, bannerWidth, bannerHeight);
 
   canvas.toBlob(uploadToCloudinary, "image/jpeg", 0.9);
 };
@@ -161,4 +145,30 @@ document.getElementById("switchCameraBtn").onclick = () => {
       : "environment";
 
   startCamera();
+};
+
+uploadFileBtn.onclick = () => {
+  fileInput.click();
+};
+
+fileInput.onchange = () => {
+  const file = fileInput.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", UPLOAD_PRESET);
+  formData.append("folder", FOLDER);
+  formData.append("tags", "Boda28feb");
+
+  fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+    method: "POST",
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log("Archivo subido:", data);
+    alert("Foto subida correctamente 📸✨");
+  })
+  .catch(err => alert("Error subiendo archivo"));
 };
