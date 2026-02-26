@@ -71,6 +71,14 @@ body {
   font-size: 18px;
   text-align: left;
 }
+#closeMenu {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 22px;
+  color: white;
+  cursor: pointer;
+}
 
 button {
   padding: 16px 24px;
