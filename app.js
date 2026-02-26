@@ -9,15 +9,27 @@ const captureBtn = document.getElementById("captureBtn");
 const sideMenu = document.getElementById("sideMenu");
 const menuButton = document.getElementById("menuButton");
 
+let currentFacingMode = "environment";
+let currentStream = null;
+
 menuButton.onclick = () => {
   sideMenu.style.left =
     sideMenu.style.left === "0px" ? "-220px" : "0px";
 };
 
 // 📸 Iniciar cámara automáticamente
-navigator.mediaDevices.getUserMedia({ video: true })
-  .then(stream => video.srcObject = stream)
+function startCamera() {
+  navigator.mediaDevices.getUserMedia({
+    video: { facingMode: currentFacingMode }
+  })
+  .then(stream => {
+    currentStream = stream;
+    video.srcObject = stream;
+  })
   .catch(err => alert("Error cámara: " + err));
+}
+
+startCamera();
 
 // 📸 Tomar foto
 captureBtn.onclick = () => {
@@ -103,3 +115,18 @@ function loadGallery() {
         "Error cargando álbum.";
     });
 }
+document.getElementById("switchCameraBtn").onclick = () => {
+
+  // Detener cámara actual
+  if (currentStream) {
+    currentStream.getTracks().forEach(track => track.stop());
+  }
+
+  // Cambiar modo
+  currentFacingMode =
+    currentFacingMode === "environment"
+      ? "user"
+      : "environment";
+
+  startCamera();
+};
