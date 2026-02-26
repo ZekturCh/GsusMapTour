@@ -154,24 +154,42 @@ uploadFileBtn.onclick = () => {
   fileInput.click();
 };
 
-fileInput.onchange = () => {
-  const file = fileInput.files[0];
-  if (!file) return;
+fileInput.onchange = async () => {
+  const files = Array.from(fileInput.files);
 
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", UPLOAD_PRESET);
-  formData.append("folder", FOLDER);
-  formData.append("tags", "Boda28feb");
+  if (files.length === 0) return;
 
-  fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-    method: "POST",
-    body: formData
-  })
-  .then(res => res.json())
-  .then(data => {
-    console.log("Archivo subido:", data);
-    alert("Foto subida correctamente 📸✨");
-  })
-  .catch(err => alert("Error subiendo archivo"));
+  if (files.length > 6) {
+    alert("Máximo 6 fotos por carga 📸");
+    fileInput.value = "";
+    return;
+  }
+
+  uploadFileBtn.disabled = true;
+  document.getElementById("uploadLoader").style.display = "block";
+
+  try {
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", UPLOAD_PRESET);
+      formData.append("folder", FOLDER);
+      formData.append("tags", "Boda28feb");
+
+      await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+        method: "POST",
+        body: formData
+      });
+    }
+
+    alert("Fotos subidas correctamente 📸✨");
+
+  } catch (error) {
+    alert("Error subiendo una de las fotos");
+    console.error(error);
+  }
+
+  uploadFileBtn.disabled = false;
+  document.getElementById("uploadLoader").style.display = "none";
+  fileInput.value = "";
 };
