@@ -55,24 +55,22 @@ body {
   left: -220px;
   width: 220px;
   height: 100vh;
-  background: #00ff5d;
-  z-index: 9999; /* MUY alto */
+  background: #111;   /* oscuro real */
+  z-index: 10001;
   transition: left 0.3s ease;
+  padding-top: 60px;  /* espacio para botón */
 }
-
-
 
 #sideMenu button {
   display: block;
   width: 100%;
-  padding: 15px;
+  padding: 18px;
   border: none;
-  background: none;
+  background: transparent;
   color: white;
-  font-size: 16px;
-  cursor: pointer;
+  font-size: 18px;
+  text-align: left;
 }
-
 
 button {
   padding: 16px 24px;
