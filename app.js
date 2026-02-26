@@ -25,6 +25,13 @@ function startCamera() {
   .then(stream => {
     currentStream = stream;
     video.srcObject = stream;
+
+    // Si es frontal, activar espejo
+    if (currentFacingMode === "user") {
+      video.classList.add("mirror");
+    } else {
+      video.classList.remove("mirror");
+    }
   })
   .catch(err => alert("Error cámara: " + err));
 }
@@ -41,10 +48,14 @@ captureBtn.onclick = () => {
   // Fondo blanco tipo polaroid
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+  
+  if (currentFacingMode === "user") {
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+  }
   // Dibujar imagen centrada
   ctx.drawImage(video, 50, 50, 500, 500);
-
+  ctx.setTransform(1, 0, 0, 1, 0, 0); // reset transformación
   // Fecha abajo
   ctx.fillStyle = "black";
   ctx.font = "20px sans-serif";
