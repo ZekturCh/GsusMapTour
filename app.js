@@ -45,21 +45,35 @@ captureBtn.onclick = () => {
   canvas.width = 600;
   canvas.height = 750;
 
-  // Fondo blanco tipo polaroid
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
+
   if (currentFacingMode === "user") {
     ctx.translate(canvas.width, 0);
     ctx.scale(-1, 1);
   }
-  // Dibujar imagen centrada
+
   ctx.drawImage(video, 50, 50, 500, 500);
-  ctx.setTransform(1, 0, 0, 1, 0, 0); // reset transformación
-  // Fecha abajo
-  ctx.fillStyle = "black";
-  ctx.font = "20px sans-serif";
-  ctx.fillText(new Date().toLocaleDateString(), 200, 600);
+
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+  const banner = document.getElementById("weddingBanner");
+
+  const photoTop = 50;
+  const photoHeight = 500;
+  const photoBottom = photoTop + photoHeight;
+
+  const espacioInferior = canvas.height - photoBottom;
+
+  const bannerRatio = banner.naturalWidth / banner.naturalHeight;
+
+  const bannerWidth = canvas.width * 0.9;
+  const bannerHeight = bannerWidth / bannerRatio;
+
+  const x = (canvas.width - bannerWidth) / 2;
+  const y = photoBottom + (espacioInferior - bannerHeight) / 2;
+
+  ctx.drawImage(banner, x, y, bannerWidth, bannerHeight);
 
   canvas.toBlob(uploadToCloudinary, "image/jpeg", 0.9);
 };
