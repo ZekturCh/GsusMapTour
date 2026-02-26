@@ -61,6 +61,12 @@ body {
   padding-top: 60px;  /* espacio para botón */
 }
 
+#uploadLoader {
+  text-align: center;
+  padding: 15px;
+  font-size: 18px;
+  color: white;
+}
 #sideMenu button {
   display: block;
   width: 100%;
