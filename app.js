@@ -193,3 +193,47 @@ fileInput.onchange = async () => {
   document.getElementById("uploadLoader").style.display = "none";
   fileInput.value = "";
 };
+const downloadAllBtn = document.getElementById("downloadAllBtn");
+
+downloadAllBtn.onclick = async () => {
+
+  downloadAllBtn.disabled = true;
+  downloadAllBtn.innerText = "Preparando descarga...";
+
+  try {
+
+    const response = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${FOLDER}.json`);
+    const data = await response.json();
+
+    if (!data.resources || data.resources.length === 0) {
+      alert("No hay fotos para descargar 📸");
+      return;
+    }
+
+    const zip = new JSZip();
+
+    for (const item of data.resources) {
+
+      const imageUrl = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/v${item.version}/${item.public_id}.${item.format}`;
+
+      const imgResponse = await fetch(imageUrl);
+      const blob = await imgResponse.blob();
+
+      zip.file(`${item.public_id}.${item.format}`, blob);
+    }
+
+    const zipBlob = await zip.generateAsync({ type: "blob" });
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(zipBlob);
+    link.download = "Boda28feb.zip";
+    link.click();
+
+  } catch (error) {
+    console.error(error);
+    alert("Error preparando descarga");
+  }
+
+  downloadAllBtn.disabled = false;
+  downloadAllBtn.innerText = "📥 Descargar Todas";
+};
